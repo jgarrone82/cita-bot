@@ -278,10 +278,10 @@ def start_with(driver: webdriver, context: CustomerProfile, cycles: int = CYCLES
         operation_param = "tramiteGrupo[0]"
 
     fast_forward_url = "https://icp.administracionelectronica.gob.es/{}/citar?p={}".format(
-        operation_category, context.province
+        operation_category, context.province.value
     )
     fast_forward_url2 = "https://icp.administracionelectronica.gob.es/{}/acInfo?{}={}".format(
-        operation_category, operation_param, context.operation_code
+        operation_category, operation_param, context.operation_code.value
     )
 
     success = False
