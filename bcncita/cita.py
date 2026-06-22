@@ -20,6 +20,7 @@ from anticaptchaofficial.imagecaptcha import imagecaptcha
 from anticaptchaofficial.recaptchav3proxyless import recaptchaV3Proxyless
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
@@ -175,7 +176,7 @@ class CustomerProfile:
     anticaptcha_api_key: Optional[str] = None
     auto_captcha: bool = True
     auto_office: bool = True
-    chrome_driver_path: str = "/usr/local/bin/chromedriver"
+    chrome_driver_path: Optional[str] = None  # None -> Selenium Manager auto-resolves the driver
     chrome_profile_name: Optional[str] = None
     chrome_profile_path: Optional[str] = None
     min_date: Optional[str] = None  # "dd/mm/yyyy"
@@ -228,7 +229,12 @@ def init_wedriver(context: CustomerProfile):
     options.add_experimental_option("prefs", prefs)
     options.add_argument("--kiosk-printing")
 
-    browser = webdriver.Chrome(context.chrome_driver_path, options=options)
+    if context.chrome_driver_path:
+        service = ChromeService(executable_path=context.chrome_driver_path)
+        browser = webdriver.Chrome(service=service, options=options)
+    else:
+        # Selenium Manager (Selenium >= 4.6) auto-downloads the matching chromedriver
+        browser = webdriver.Chrome(options=options)
     browser.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
     browser.execute_cdp_cmd("Network.setUserAgentOverride", {"userAgent": ua})
 

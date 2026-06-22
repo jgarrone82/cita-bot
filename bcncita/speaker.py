@@ -29,8 +29,16 @@ class wSaySpeaker:
         os.system('wsay "' + phrase + '"')
 
 
+class NullSpeaker:
+    """Fallback when no TTS engine is found: prints instead of crashing on import."""
+
+    def say(self, phrase):
+        print(f"[SPEAKER] {phrase}")
+
+
 def new_speaker():
     for cls in [eSpeakSpeaker, saySpeaker, wSaySpeaker]:
         if cls.is_applicable():
             return cls()
-    raise ValueError("Please download wsay (Windows) or espeak (Linux). See README for more info")
+    print("WARNING: no TTS engine (espeak/say/wsay) found. Install wsay on Windows for voice alerts.")
+    return NullSpeaker()
